@@ -1,0 +1,50 @@
+# ===================================
+# Example Terraform Variables File
+# ===================================
+# Copy this file to terraform.tfvars and update with your values
+# terraform.tfvars is gitignored to protect sensitive information
+
+# ===================================
+# AWS Configuration
+# ===================================
+
+# AWS Region - Choose a region close to you
+# Examples: us-east-1, us-west-2, eu-west-1, ap-southeast-1
+aws_region = "us-east-1"
+
+# AWS EC2 Instance AMI ID
+# IMPORTANT: AMI IDs are region-specific. Update this based on your chosen region
+# To find AMI IDs: AWS Console > EC2 > AMIs > Public Images
+# Amazon Linux 2023: Search for "al2023-ami" in your region
+# Ubuntu 22.04 LTS: Search for "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04"
+instance_ami = "ami-0c55b159cbfafe1f0"  # Update to valid AMI for your region
+
+# AWS EC2 Instance Type
+# Free tier eligible: t2.micro, t3.micro
+# Examples: t2.micro, t3.small, t3.medium
+instance_type = "t2.micro"
+
+# ===================================
+# GCP Configuration
+# ===================================
+
+# GCP Project ID (REQUIRED)
+# Find this in: GCP Console > Home > Project Info
+# Example: "my-project-12345"
+gcp_project = "your-gcp-project-id"  # CHANGE THIS
+
+# GCP Region - Choose a region close to you
+# Examples: us-central1, us-east1, europe-west1, asia-southeast1
+gcp_region = "us-central1"
+
+# GCP Machine Type
+# Free tier eligible: e2-micro
+# Examples: e2-micro, e2-small, e2-medium, n1-standard-1
+instance_machine_type = "e2-micro"
+
+# GCP VM Image
+# Examples:
+#   - debian-cloud/debian-12 (Debian 12 - current stable)
+#   - ubuntu-os-cloud/ubuntu-2204-lts (Ubuntu 22.04 LTS)
+#   - centos-cloud/centos-stream-9 (CentOS Stream 9)
+instance_image = "debian-cloud/debian-12"
