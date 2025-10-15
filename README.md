@@ -1,10 +1,11 @@
-# Multi-Cloud Terraform Infrastructure
+# Multi-Cloud Terraform Demo Infrastructure
 
 ![Terraform](https://img.shields.io/badge/Terraform-%235835CC.svg?style=flat&logo=terraform&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=flat&logo=amazon-aws&logoColor=white)
 ![Google Cloud](https://img.shields.io/badge/Google%20Cloud-%234285F4.svg?style=flat&logo=google-cloud&logoColor=white)
+![Azure](https://img.shields.io/badge/Azure-%230078D4.svg?style=flat&logo=microsoft-azure&logoColor=white)
 
-A production-ready Terraform project demonstrating multi-cloud infrastructure deployment across AWS and Google Cloud Platform (GCP). This project showcases best practices for infrastructure as code, modular design, and secure cloud resource management.
+A production-ready Terraform project demonstrating multi-cloud infrastructure deployment across AWS, Google Cloud Platform (GCP), and Microsoft Azure. This project showcases best practices for infrastructure as code, modular design, and secure cloud resource management.
 
 ## 📋 Table of Contents
 
@@ -24,7 +25,7 @@ A production-ready Terraform project demonstrating multi-cloud infrastructure de
 
 This project demonstrates how to use Terraform to deploy and manage resources across multiple cloud providers simultaneously. It implements:
 
-- **Modular Architecture**: Separate modules for AWS and GCP
+- **Modular Architecture**: Separate modules for AWS, GCP, and Azure
 - **Security Best Practices**: No hardcoded credentials, proper network isolation
 - **Network Configuration**: VPCs, subnets, security groups, and firewalls
 - **Variable Validation**: Input validation to prevent configuration errors
@@ -44,6 +45,14 @@ This project demonstrates how to use Terraform to deploy and manage resources ac
 - **Firewall Rules**: SSH and HTTP/HTTPS access
 - **Compute Instance**: VM instance with external IP
 
+### Azure Architecture
+- **Resource Group**: Logical container for Azure resources
+- **Virtual Network**: Isolated network (10.0.0.0/16)
+- **Subnet**: 10.0.1.0/24 within the VNet
+- **Network Security Group**: SSH, HTTP, and HTTPS access rules
+- **Public IP**: Static public IP address
+- **Linux VM**: Ubuntu 22.04 LTS virtual machine with SSH access
+
 ## ✅ Prerequisites
 
 Before you begin, ensure you have the following:
@@ -52,6 +61,7 @@ Before you begin, ensure you have the following:
 - **Terraform** >= 1.0 ([Installation Guide](https://developer.hashicorp.com/terraform/downloads))
 - **AWS CLI** ([Installation Guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html))
 - **gcloud CLI** ([Installation Guide](https://cloud.google.com/sdk/docs/install))
+- **Azure CLI** ([Installation Guide](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli))
 
 ### Cloud Account Requirements
 
@@ -70,11 +80,22 @@ Before you begin, ensure you have the following:
    - **gcloud CLI**: Run `gcloud auth application-default login`
    - **Compute Engine Service Account**: If running on GCP
 
+#### Azure
+1. Microsoft Azure account with an active subscription
+2. Azure credentials configured using one of these methods:
+   - **Azure CLI**: Run `az login`
+   - **Service Principal**: Set environment variables:
+     - `ARM_CLIENT_ID`
+     - `ARM_CLIENT_SECRET`
+     - `ARM_SUBSCRIPTION_ID`
+     - `ARM_TENANT_ID`
+   - **Managed Identity**: If running on Azure VM
+
 ## 📁 Project Structure
 
 ```
 Multi-Cloud-Terraform/
-├── main.tf                      # Root module - orchestrates AWS and GCP modules
+├── main.tf                      # Root module - orchestrates AWS, GCP, and Azure modules
 ├── variables.tf                 # Root-level variable definitions
 ├── terraform.tfvars.example     # Example variables file (copy to terraform.tfvars)
 ├── .gitignore                   # Git ignore rules for sensitive files
@@ -85,10 +106,15 @@ Multi-Cloud-Terraform/
 │   ├── variables.tf             # AWS-specific variables
 │   └── outputs.tf               # AWS resource outputs
 │
-└── GCP/                         # GCP module
-    ├── main.tf                  # GCP provider, network, compute resources
-    ├── variables.tf             # GCP-specific variables
-    └── outputs.tf               # GCP resource outputs
+├── GCP/                         # GCP module
+│   ├── main.tf                  # GCP provider, network, compute resources
+│   ├── variables.tf             # GCP-specific variables
+│   └── outputs.tf               # GCP resource outputs
+│
+└── Azure/                       # Azure module
+    ├── main.tf                  # Azure provider, VNet, VM resources
+    ├── variables.tf             # Azure-specific variables
+    └── outputs.tf               # Azure resource outputs
 ```
 
 ## 🚀 Setup Instructions
@@ -128,7 +154,34 @@ gcloud config set project YOUR_PROJECT_ID
 $env:GOOGLE_APPLICATION_CREDENTIALS="C:\path\to\your\credentials.json"
 ```
 
-### 4. Create terraform.tfvars File
+### 4. Configure Azure Credentials
+
+**Option A: Using Azure CLI (Recommended)**
+```bash
+az login
+```
+
+**Option B: Using Service Principal (PowerShell)**
+```powershell
+$env:ARM_CLIENT_ID="your-client-id"
+$env:ARM_CLIENT_SECRET="your-client-secret"
+$env:ARM_SUBSCRIPTION_ID="your-subscription-id"
+$env:ARM_TENANT_ID="your-tenant-id"
+```
+
+### 5. Generate SSH Key for Azure
+
+Azure requires an SSH public key for VM access:
+
+```bash
+# Generate SSH key pair
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/azure_key
+
+# The public key will be in ~/.ssh/azure_key.pub
+# Copy its contents to use in terraform.tfvars
+```
+
+### 6. Create terraform.tfvars File
 
 ```bash
 # Copy the example file
@@ -148,6 +201,15 @@ gcp_project           = "your-gcp-project-id"  # REQUIRED: Your GCP project ID
 gcp_region            = "us-central1"
 instance_machine_type = "e2-micro"
 instance_image        = "debian-cloud/debian-12"
+
+# Azure Configuration
+azure_location    = "East US"
+vm_size           = "Standard_B1s"
+admin_username    = "azureuser"
+ssh_public_key    = "ssh-rsa AAAAB3NzaC1yc2E..."  # REQUIRED: Your SSH public key
+vm_image_publisher = "Canonical"
+vm_image_offer     = "0001-com-ubuntu-server-jammy"
+vm_image_sku       = "22_04-lts-gen2"
 ```
 
 **Important**: Find a valid AMI ID for your AWS region:
@@ -155,18 +217,18 @@ instance_image        = "debian-cloud/debian-12"
 - Search for "Amazon Linux 2023" or "Ubuntu 22.04 LTS"
 - Copy the AMI ID for your selected region
 
-### 5. Initialize Terraform
+### 7. Initialize Terraform
 
 ```bash
 terraform init
 ```
 
 This command:
-- Downloads required provider plugins (AWS, GCP)
+- Downloads required provider plugins (AWS, GCP, Azure)
 - Initializes the backend
 - Prepares modules for use
 
-### 6. Review the Execution Plan
+### 8. Review the Execution Plan
 
 ```bash
 terraform plan
@@ -174,7 +236,7 @@ terraform plan
 
 This shows you what resources will be created before applying changes.
 
-### 7. Deploy the Infrastructure
+### 9. Deploy the Infrastructure
 
 ```bash
 terraform apply
@@ -195,6 +257,9 @@ terraform apply -target=module.aws_resources
 
 # Deploy only GCP resources
 terraform apply -target=module.gcp_resources
+
+# Deploy only Azure resources
+terraform apply -target=module.azure_resources
 ```
 
 ### Viewing Outputs
@@ -203,9 +268,10 @@ terraform apply -target=module.gcp_resources
 # View all outputs
 terraform output
 
-# View specific output
+# View specific outputs
 terraform output aws_instance_ip
 terraform output gcp_instance_ip
+terraform output azure_vm_public_ip
 ```
 
 ### Destroying Resources
@@ -238,6 +304,17 @@ terraform destroy -target=module.aws_resources
 | Firewall Rule | `terraform-allow-ssh` | SSH access (port 22) |
 | Firewall Rule | `terraform-allow-http` | HTTP/HTTPS access |
 | Compute Instance | `terraform-instance` | VM instance |
+
+### Azure Resources
+| Resource Type | Name | Description |
+|--------------|------|-------------|
+| Resource Group | `terraform-resources` | Logical container for resources |
+| Virtual Network | `terraform-vnet` | Virtual network (10.0.0.0/16) |
+| Subnet | `terraform-subnet` | Subnet (10.0.1.0/24) |
+| Network Security Group | `terraform-nsg` | Firewall rules (SSH, HTTP, HTTPS) |
+| Public IP | `terraform-public-ip` | Static public IP address |
+| Network Interface | `terraform-nic` | VM network interface |
+| Linux VM | `terraform-vm` | Ubuntu 22.04 LTS virtual machine |
 
 ## 🔒 Security Considerations
 
@@ -278,11 +355,19 @@ terraform destroy -target=module.aws_resources
 - **Egress Traffic**: First 1GB free, then $0.12/GB
 - **Estimated Monthly Cost**: ~$7-12/month
 
-**Total Estimated Cost**: ~$17-27/month
+### Azure (East US)
+- **Standard_B1s VM**: ~$0.0104/hour (~$7.59/month)
+- **Managed Disk**: ~$0.05/GB/month (30GB = $1.50/month)
+- **Public IP**: ~$3.65/month (static)
+- **Egress Traffic**: First 5GB free, then $0.087/GB
+- **Estimated Monthly Cost**: ~$13-18/month
 
-💡 **Tip**: Both providers offer free tier options. Check eligibility at:
+**Total Estimated Cost**: ~$30-45/month
+
+💡 **Tip**: All three providers offer free tier options. Check eligibility at:
 - [AWS Free Tier](https://aws.amazon.com/free/)
 - [GCP Free Tier](https://cloud.google.com/free)
+- [Azure Free Tier](https://azure.microsoft.com/en-us/free/)
 
 ## 🔍 Troubleshooting
 
@@ -293,6 +378,16 @@ terraform destroy -target=module.aws_resources
 
 #### Issue: "Error: Error creating instance: googleapi: Error 403"
 **Solution**: Ensure billing is enabled on your GCP project and you have necessary permissions.
+
+#### Issue: "Error: SSH public key is required"
+**Solution**: Generate an SSH key pair and add the public key to `terraform.tfvars`:
+```bash
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/azure_key
+# Copy contents of ~/.ssh/azure_key.pub to terraform.tfvars
+```
+
+#### Issue: "Error: building account: Azure CLI not authenticated"
+**Solution**: Run `az login` to authenticate with Azure CLI.
 
 #### Issue: "Error: No valid credential sources found"
 **Solution**: Configure AWS/GCP credentials using the methods described in [Setup Instructions](#setup-instructions).

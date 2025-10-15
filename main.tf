@@ -10,6 +10,10 @@ terraform {
       source  = "hashicorp/google"
       version = "~> 5.0"
     }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
   }
 
   # Optional: Configure backend for remote state storage
@@ -40,6 +44,19 @@ module "gcp_resources" {
   instance_image        = var.instance_image
 }
 
+# Azure Module
+module "azure_resources" {
+  source = "./Azure"
+
+  azure_location      = var.azure_location
+  vm_size             = var.vm_size
+  admin_username      = var.admin_username
+  ssh_public_key      = var.ssh_public_key
+  vm_image_publisher  = var.vm_image_publisher
+  vm_image_offer      = var.vm_image_offer
+  vm_image_sku        = var.vm_image_sku
+}
+
 # Outputs
 output "aws_instance_ip" {
   description = "Public IP address of the AWS EC2 instance"
@@ -59,4 +76,14 @@ output "gcp_instance_ip" {
 output "gcp_instance_id" {
   description = "ID of the GCP Compute Engine instance"
   value       = module.gcp_resources.gcp_instance_id
+}
+
+output "azure_vm_public_ip" {
+  description = "Public IP address of the Azure VM"
+  value       = module.azure_resources.azure_vm_public_ip
+}
+
+output "azure_vm_id" {
+  description = "ID of the Azure VM"
+  value       = module.azure_resources.azure_vm_id
 }
