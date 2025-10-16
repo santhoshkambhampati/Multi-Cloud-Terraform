@@ -22,8 +22,8 @@ jobs:
 
       - name: Terraform Format Check
         id: fmt
-        run: terraform fmt -check -recursive
-        continue-on-error: true
+        run: terraform fmt -check -recursive -diff
+        continue-on-error: false
 
       - name: Terraform Init
         id: init
@@ -69,12 +69,6 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
-
-      - name: Fail if format check failed
-        if: steps.fmt.outcome == 'failure'
-        run: |
-          echo "Terraform formatting check failed. Please run 'terraform fmt -recursive' to fix."
-          exit 1
 
   security-scan:
     name: Security Scan
