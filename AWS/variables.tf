@@ -12,7 +12,7 @@ variable "aws_region" {
 variable "instance_ami" {
   description = "The ID of the AMI to use for the EC2 instance. Default is Amazon Linux 2023 in us-east-1."
   type        = string
-  default     = "ami-0c55b159cbfafe1f0"  # Update this to a current AMI ID for your region
+  default     = "ami-0c55b159cbfafe1f0" # Update this to a current AMI ID for your region
 
   validation {
     condition     = can(regex("^ami-[a-z0-9]{8,}$", var.instance_ami))

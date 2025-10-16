@@ -16,7 +16,7 @@ variable "aws_region" {
 variable "instance_ami" {
   description = "The ID of the AMI to use for the AWS EC2 instance. Default is Amazon Linux 2023 in us-east-1."
   type        = string
-  default     = "ami-0c55b159cbfafe1f0"  # Update this to a current AMI ID for your region
+  default     = "ami-0c55b159cbfafe1f0" # Update this to a current AMI ID for your region
 
   validation {
     condition     = can(regex("^ami-[a-z0-9]{8,}$", var.instance_ami))
@@ -63,7 +63,7 @@ variable "gcp_region" {
 variable "instance_machine_type" {
   description = "The machine type of the GCP Compute Engine instance."
   type        = string
-  default     = "e2-micro"  # Updated to newer generation (e2) and free tier eligible
+  default     = "e2-micro" # Updated to newer generation (e2) and free tier eligible
 
   validation {
     condition     = can(regex("^[a-z][0-9]-", var.instance_machine_type))
@@ -74,7 +74,7 @@ variable "instance_machine_type" {
 variable "instance_image" {
   description = "The image for the GCP Compute Engine instance."
   type        = string
-  default     = "debian-cloud/debian-12"  # Updated to Debian 12 (current stable)
+  default     = "debian-cloud/debian-12" # Updated to Debian 12 (current stable)
 
   validation {
     condition     = length(var.instance_image) > 0
@@ -100,7 +100,7 @@ variable "azure_location" {
 variable "vm_size" {
   description = "The size of the Azure Virtual Machine."
   type        = string
-  default     = "Standard_B1s"  # Free tier eligible (750 hours/month)
+  default     = "Standard_B1s" # Free tier eligible (750 hours/month)
 
   validation {
     condition     = can(regex("^Standard_", var.vm_size))
@@ -122,7 +122,7 @@ variable "admin_username" {
 variable "ssh_public_key" {
   description = "SSH public key for the Azure VM. Generate with 'ssh-keygen -t rsa -b 4096'."
   type        = string
-  default     = ""  # Must be provided by user
+  default     = "" # Must be provided by user
 
   validation {
     condition     = var.ssh_public_key == "" || can(regex("^ssh-rsa |^ssh-ed25519 ", var.ssh_public_key))
@@ -139,7 +139,7 @@ variable "vm_image_publisher" {
 variable "vm_image_offer" {
   description = "Offer of the Azure VM image."
   type        = string
-  default     = "0001-com-ubuntu-server-jammy"  # Ubuntu 22.04 LTS
+  default     = "0001-com-ubuntu-server-jammy" # Ubuntu 22.04 LTS
 }
 
 variable "vm_image_sku" {

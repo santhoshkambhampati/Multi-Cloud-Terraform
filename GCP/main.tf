@@ -13,7 +13,7 @@ provider "google" {
   # 1. GOOGLE_APPLICATION_CREDENTIALS environment variable pointing to a service account key file
   # 2. gcloud CLI credentials (gcloud auth application-default login)
   # 3. Service account attached to the compute instance (if running on GCP)
-  
+
   project = var.gcp_project
   region  = var.gcp_region
 }

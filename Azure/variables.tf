@@ -12,7 +12,7 @@ variable "azure_location" {
 variable "vm_size" {
   description = "The size of the Azure Virtual Machine."
   type        = string
-  default     = "Standard_B1s"  # Free tier eligible (750 hours/month)
+  default     = "Standard_B1s" # Free tier eligible (750 hours/month)
 
   validation {
     condition     = can(regex("^Standard_", var.vm_size))
@@ -50,7 +50,7 @@ variable "vm_image_publisher" {
 variable "vm_image_offer" {
   description = "Offer of the VM image."
   type        = string
-  default     = "0001-com-ubuntu-server-jammy"  # Ubuntu 22.04 LTS
+  default     = "0001-com-ubuntu-server-jammy" # Ubuntu 22.04 LTS
 }
 
 variable "vm_image_sku" {

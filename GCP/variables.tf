@@ -22,7 +22,7 @@ variable "gcp_region" {
 variable "instance_machine_type" {
   description = "The machine type of the GCP Compute Engine instance."
   type        = string
-  default     = "e2-micro"  # Updated to newer generation (e2) and free tier eligible
+  default     = "e2-micro" # Updated to newer generation (e2) and free tier eligible
 
   validation {
     condition     = can(regex("^[a-z][0-9]-", var.instance_machine_type))
@@ -33,7 +33,7 @@ variable "instance_machine_type" {
 variable "instance_image" {
   description = "The image for the GCP Compute Engine instance."
   type        = string
-  default     = "debian-cloud/debian-12"  # Updated to Debian 12 (current stable)
+  default     = "debian-cloud/debian-12" # Updated to Debian 12 (current stable)
 
   validation {
     condition     = length(var.instance_image) > 0
