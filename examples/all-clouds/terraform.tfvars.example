@@ -1,0 +1,25 @@
+# ===================================
+# AWS Configuration
+# ===================================
+aws_region    = "us-east-1"
+instance_ami  = "ami-0c55b159cbfafe1f0"  # Update to valid AMI for your region
+instance_type = "t2.micro"
+
+# ===================================
+# GCP Configuration
+# ===================================
+gcp_project           = "your-gcp-project-id"  # REQUIRED: Your GCP project ID
+gcp_region            = "us-central1"
+instance_machine_type = "e2-micro"
+instance_image        = "debian-cloud/debian-12"
+
+# ===================================
+# Azure Configuration
+# ===================================
+azure_location     = "East US"
+vm_size            = "Standard_B1s"
+admin_username     = "azureuser"
+ssh_public_key     = "YOUR_SSH_PUBLIC_KEY_HERE"  # REQUIRED: From ~/.ssh/azure_key.pub
+vm_image_publisher = "Canonical"
+vm_image_offer     = "0001-com-ubuntu-server-jammy"
+vm_image_sku       = "22_04-lts-gen2"

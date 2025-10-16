@@ -1,0 +1,5 @@
+# GCP Configuration
+gcp_project           = "your-gcp-project-id"  # REQUIRED: Your GCP project ID
+gcp_region            = "us-central1"
+instance_machine_type = "e2-micro"
+instance_image        = "debian-cloud/debian-12"
