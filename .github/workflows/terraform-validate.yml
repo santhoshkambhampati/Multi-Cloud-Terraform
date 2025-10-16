@@ -22,8 +22,15 @@ jobs:
 
       - name: Terraform Format Check
         id: fmt
-        run: terraform fmt -check -recursive -diff
-        continue-on-error: false
+        run: |
+          echo "Checking Terraform formatting..."
+          if ! terraform fmt -check -recursive -diff; then
+            echo "::warning::Some files need formatting. Run 'terraform fmt -recursive' or 'make fmt' to fix."
+            echo "format_needed=true" >> $GITHUB_OUTPUT
+          else
+            echo "All files are properly formatted!"
+          fi
+        continue-on-error: true
 
       - name: Terraform Init
         id: init
@@ -69,6 +76,13 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
+
+      - name: Terraform Format Summary
+        if: steps.fmt.outputs.format_needed == 'true'
+        run: |
+          echo "::notice::Terraform files need formatting"
+          echo "To fix locally, run: terraform fmt -recursive"
+          echo "Or use the Makefile: make fmt"
 
   security-scan:
     name: Security Scan
